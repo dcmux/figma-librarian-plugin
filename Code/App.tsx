@@ -1072,7 +1072,7 @@ export default function App() {
                     .filter(iconName => 
                       iconName.toLowerCase().includes(iconSearchTerm.toLowerCase())
                     )
-                    .slice(0, 200) // Show more icons
+                    // Show all filtered icons
                     .map((iconName) => {
                       const IconComponent = (LucideIcons as any)[iconName];
                       return (
