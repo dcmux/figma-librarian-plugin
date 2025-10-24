@@ -42,6 +42,9 @@ async function loadFonts() {
   await figma.loadFontAsync({ family: "Inter", style: "Bold" });
 }
 
+// Helper function to create Lucide icon SVG
+
+
 // ========================================
 // SHADCN COMPONENT BUILDERS
 // ========================================
@@ -1027,56 +1030,32 @@ figma.ui.onmessage = async (msg) => {
 
   if (msg.type === 'place-icon') {
     try {
-      const { iconName, size, color } = msg.data;
+      const { iconName, size, color, svgData } = msg.data;
       
-      const iconSize = parseInt(size) || 24;
+      if (!svgData) {
+        throw new Error('No SVG data provided');
+      }
       
-      await loadFonts();
+      // Create the icon directly from SVG data
+      const iconNode = figma.createNodeFromSvg(svgData);
+      iconNode.name = iconName;
       
-      // Create a container for the icon
-      const iconContainer = figma.createFrame();
-      iconContainer.name = `Icon: ${iconName}`;
-      iconContainer.layoutMode = "VERTICAL";
-      iconContainer.counterAxisSizingMode = "AUTO";
-      iconContainer.primaryAxisSizingMode = "AUTO";
-      iconContainer.itemSpacing = 4;
-      iconContainer.fills = [];
-      
-      // Create icon placeholder
-      const iconFrame = figma.createFrame();
-      iconFrame.name = iconName;
-      iconFrame.resize(iconSize, iconSize);
-      iconFrame.fills = [];
-      iconFrame.strokeWeight = 1.5;
-      iconFrame.strokes = [{ type: 'SOLID', color: hexToRgb(color || '#000000') }];
-      iconFrame.cornerRadius = 2;
-      
-      iconContainer.appendChild(iconFrame);
-      
-      // Add label
-      const labelText = figma.createText();
-      labelText.fontName = { family: "Inter", style: "Regular" };
-      labelText.characters = iconName;
-      labelText.fontSize = 10;
-      labelText.fills = [{ type: 'SOLID', color: hexToRgb('#6B7280') }];
-      iconContainer.appendChild(labelText);
-      
-      // Store metadata
-      iconContainer.setPluginData('librarian-icon', iconName);
-      iconContainer.setPluginData('librarian-type', 'lucide-icon');
-      iconContainer.setPluginData('librarian-size', size);
-      iconContainer.setPluginData('librarian-color', color || '#000000');
+      // Store metadata for identification
+      iconNode.setPluginData('librarian-icon', iconName);
+      iconNode.setPluginData('librarian-type', 'lucide-icon');
+      iconNode.setPluginData('librarian-size', size);
+      iconNode.setPluginData('librarian-color', color || '#000000');
       
       // Position the icon at the center of the viewport
-      iconContainer.x = figma.viewport.center.x - (iconContainer.width / 2);
-      iconContainer.y = figma.viewport.center.y - (iconContainer.height / 2);
+      iconNode.x = figma.viewport.center.x - (iconNode.width / 2);
+      iconNode.y = figma.viewport.center.y - (iconNode.height / 2);
       
       // Add to the current page
-      figma.currentPage.appendChild(iconContainer);
+      figma.currentPage.appendChild(iconNode);
       
       // Select the newly created icon
-      figma.currentPage.selection = [iconContainer];
-      figma.viewport.scrollAndZoomIntoView([iconContainer]);
+      figma.currentPage.selection = [iconNode];
+      figma.viewport.scrollAndZoomIntoView([iconNode]);
       
       // Send success message back to UI
       figma.ui.postMessage({
@@ -1089,7 +1068,7 @@ figma.ui.onmessage = async (msg) => {
       figma.ui.postMessage({
         type: 'icon-placed',
         success: false,
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
 import { ChevronDown, Search, Plus, Info, RefreshCw, Settings, X, Eye, EyeOff, Lock } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { getIconLibrary } from './lib/cdn-icon-loader';
@@ -1183,18 +1184,57 @@ export default function App() {
               </div>
 
               <button 
-                onClick={() => {
+                onClick={async () => {
                   if (!selectedLucideIcon) {
                     toast.error('Please select an icon first');
                     return;
                   }
+                  
+                  // Get the actual SVG data from the Lucide React component
+                  const IconComponent = (LucideIcons as any)[selectedLucideIcon];
+                  if (!IconComponent) {
+                    toast.error('Icon not found');
+                    return;
+                  }
+                  
+                  // Create a temporary container to render the icon and extract SVG
+                  const tempContainer = document.createElement('div');
+                  tempContainer.style.position = 'absolute';
+                  tempContainer.style.left = '-9999px';
+                  document.body.appendChild(tempContainer);
+                  
+                  // Render the icon to get SVG data
+                  const root = createRoot(tempContainer);
+                  root.render(React.createElement(IconComponent, { 
+                    size: parseInt(iconSize), 
+                    color: iconColor,
+                    strokeWidth: 2 
+                  }));
+                  
+                  // Wait a moment for rendering
+                  await new Promise(resolve => setTimeout(resolve, 100));
+                  
+                  // Extract the SVG element and get its HTML
+                  const svgElement = tempContainer.querySelector('svg');
+                  const svgData = svgElement ? svgElement.outerHTML : null;
+                  
+                  // Clean up
+                  root.unmount();
+                  document.body.removeChild(tempContainer);
+                  
+                  if (!svgData) {
+                    toast.error('Failed to extract SVG data');
+                    return;
+                  }
+                  
                   parent.postMessage({
                     pluginMessage: {
                       type: 'place-icon',
                       data: {
                         iconName: selectedLucideIcon,
                         size: iconSize,
-                        color: iconColor
+                        color: iconColor,
+                        svgData: svgData
                       }
                     }
                   }, '*');
