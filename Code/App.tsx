@@ -1132,24 +1132,64 @@ export default function App() {
                 <Plus size={24} strokeWidth={3} />
               </button>
             </div>
+
+            {/* Footer with Size Dropdown and Color Control */}
+            <div style={{ 
+              padding: '20px', 
+              borderTop: '1px solid #e5e7eb',
+              backgroundColor: '#f8f9fa',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexShrink: 0
+            }}>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                  <div>
-                    <label style={{ 
-                      display: 'block', 
-                      fontSize: '12px', 
-                      color: '#646464', 
-                      marginBottom: '4px' 
-                    }}>
-                      Size
-                    </label>
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '12px', 
+                    color: '#646464', 
+                    marginBottom: '4px' 
+                  }}>
+                    Size
+                  </label>
+                  <select
+                    value={iconSize}
+                    onChange={(e) => setIconSize(e.target.value)}
+                    style={{
+                      width: '80px',
+                      height: '32px',
+                      padding: '0 8px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '4px',
+                      fontSize: '13px',
+                      backgroundColor: 'white',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="16">16px</option>
+                    <option value="20">20px</option>
+                    <option value="24">24px</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '12px', 
+                    color: '#646464', 
+                    marginBottom: '4px' 
+                  }}>
+                    Color
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <input
-                      type="number"
-                      value={iconSize}
-                      onChange={(e) => setIconSize(e.target.value)}
-                      min="8"
-                      max="128"
+                      type="text"
+                      value={iconColor}
+                      onChange={(e) => setIconColor(e.target.value)}
+                      placeholder="#000000"
                       style={{
-                        width: '80px',
+                        width: '100px',
                         height: '32px',
                         padding: '0 8px',
                         border: '1px solid #d1d5db',
@@ -1157,95 +1197,59 @@ export default function App() {
                         fontSize: '13px'
                       }}
                     />
-                  </div>
-                  
-                  <div>
-                    <label style={{ 
-                      display: 'block', 
-                      fontSize: '12px', 
-                      color: '#646464', 
-                      marginBottom: '4px' 
-                    }}>
-                      Color
-                    </label>
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      backgroundColor: 'white',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '4px',
-                      padding: '8px',
-                      gap: '8px',
-                      width: '200px'
-                    }}>
-                      <input
-                        type="color"
-                        value={iconColor}
-                        onChange={(e) => setIconColor(e.target.value.toUpperCase())}
-                        style={{
-                          width: '24px',
-                          height: '24px',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '2px',
-                          cursor: 'pointer'
-                        }}
-                      />
-                      <input
-                        type="text"
-                        value={iconColor.toUpperCase()}
-                        onChange={(e) => setIconColor(e.target.value.toUpperCase())}
-                        style={{
-                          flex: 1,
-                          border: 'none',
-                          outline: 'none',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          backgroundColor: 'transparent'
-                        }}
-                      />
-                    </div>
+                    <input
+                      type="color"
+                      value={iconColor}
+                      onChange={(e) => setIconColor(e.target.value)}
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        backgroundColor: 'transparent'
+                      }}
+                    />
                   </div>
                 </div>
-
-                <button 
-                  onClick={() => {
-                    if (!selectedLucideIcon) {
-                      toast.error('Please select an icon first');
-                      return;
-                    }
-                    parent.postMessage({
-                      pluginMessage: {
-                        type: 'place-icon',
-                        data: {
-                          iconName: selectedLucideIcon,
-                          size: iconSize,
-                          color: iconColor
-                        }
-                      }
-                    }, '*');
-                    toast.success(`Icon added to canvas!`, {
-                      description: selectedLucideIcon
-                    });
-                  }}
-                  disabled={!selectedLucideIcon}
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '50%',
-                    backgroundColor: selectedLucideIcon ? '#165dff' : '#d1d5db',
-                    border: 'none',
-                    color: 'white',
-                    cursor: selectedLucideIcon ? 'pointer' : 'not-allowed',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: selectedLucideIcon ? '0 4px 12px rgba(22, 93, 255, 0.3)' : 'none',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  <Plus size={24} strokeWidth={3} />
-                </button>
               </div>
+
+              <button 
+                onClick={() => {
+                  if (!selectedLucideIcon) {
+                    toast.error('Please select an icon first');
+                    return;
+                  }
+                  parent.postMessage({
+                    pluginMessage: {
+                      type: 'place-icon',
+                      data: {
+                        iconName: selectedLucideIcon,
+                        size: iconSize,
+                        color: iconColor
+                      }
+                    }
+                  }, '*');
+                  toast.success('Icon added to canvas!');
+                }}
+                disabled={!selectedLucideIcon}
+                style={{
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  backgroundColor: selectedLucideIcon ? '#165dff' : '#d1d5db',
+                  border: 'none',
+                  color: 'white',
+                  cursor: selectedLucideIcon ? 'pointer' : 'not-allowed',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: selectedLucideIcon ? '0 4px 12px rgba(22, 93, 255, 0.3)' : 'none',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <Plus size={24} strokeWidth={3} />
+              </button>
             </div>
           </div>
         )}
