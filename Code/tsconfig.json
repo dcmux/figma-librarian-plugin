@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "lib": ["ES2018", "DOM", "DOM.Iterable"],
+    "jsx": "react",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "noEmit": false,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "types": [],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/@figma"
+    ]
+  },
+  "include": [
+    "main-ui.tsx",
+    "App.tsx",
+    "globals.css",
+    "imports/**/*",
+    "lib/**/*"
+  ],
+  "exclude": [
+    "node_modules", 
+    "dist",
+    "simple-test.tsx",
+    "simple-code.ts",
+    "src-code/**/*.ts",
+    "components/**/*"
+  ]
+}
