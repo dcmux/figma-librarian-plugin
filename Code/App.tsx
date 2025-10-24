@@ -1045,7 +1045,8 @@ export default function App() {
 
             {/* Icon Grid */}
             <div style={{ 
-              flex: 1, 
+              flex: '1 1 0',
+              minHeight: 0,
               padding: '20px', 
               overflow: 'auto'
             }}>
@@ -1100,15 +1101,37 @@ export default function App() {
               )}
             </div>
 
-            {/* Persistent Footer */}
+            {/* Simple Persistent Footer - Always Visible */}
             <div style={{ 
               padding: '20px', 
               borderTop: '1px solid #e5e7eb',
               backgroundColor: '#f8f9fa',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between'
+              justifyContent: 'center',
+              flexShrink: 0
             }}>
+              <button 
+                onClick={() => {
+                  toast.success('Add icon feature coming soon!');
+                }}
+                style={{
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  backgroundColor: '#165dff',
+                  border: 'none',
+                  color: 'white',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 12px rgba(22, 93, 255, 0.3)'
+                }}
+              >
+                <Plus size={24} strokeWidth={3} />
+              </button>
+            </div>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                   <div>
                     <label style={{ 
