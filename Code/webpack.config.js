@@ -11,7 +11,7 @@ module.exports = (env, argv) => ({
 
   entry: {
     ui: './main-ui.tsx',
-    code: './simple-code.ts',
+    code: './code.ts',
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],

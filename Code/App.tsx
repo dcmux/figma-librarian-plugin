@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { ChevronDown, Search, Plus, Info, RefreshCw, Settings, X } from 'lucide-react';
+import { ChevronDown, Search, Plus, Info, RefreshCw, Settings, X, Eye, EyeOff, Lock } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { getIconLibrary } from './lib/cdn-icon-loader';
 import { componentRegistry } from './lib/component-registry';
@@ -96,11 +96,12 @@ export default function App() {
   return (
     <div style={{ 
       backgroundColor: 'white', 
-      height: '100vh', 
+      height: '100vh',
       display: 'flex', 
       flexDirection: 'column',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      fontSize: '14px'
+      fontSize: '14px',
+      overflow: 'hidden'
     }}>
       {/* Header */}
       <div style={{ 
@@ -225,7 +226,9 @@ export default function App() {
           border: '1px solid #e5e7eb',
           display: 'flex',
           flexDirection: 'column',
-          gap: '24px'
+          gap: '24px',
+          flex: 1,
+          overflowY: 'auto'
         }}>
           <div style={{ 
             display: 'flex', 
@@ -897,8 +900,9 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Content */}
-      <div style={{ flex: 1, overflow: 'hidden' }}>
+      {/* Main Content - Show when not in settings or about mode */}
+      {!showSettings && !showAbout && (
+        <div style={{ flex: 1, overflow: 'hidden' }}>
         {/* Components Tab */}
         {activeTab === 'components' && (
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -1188,7 +1192,8 @@ export default function App() {
             )}
           </div>
         )}
-      </div>
+        </div>
+      )}
       
       <Toaster />
     </div>
