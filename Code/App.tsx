@@ -84,10 +84,30 @@ export default function App() {
 
   const handleTabChange = (tab: 'components' | 'blocks' | 'icons') => {
     setActiveTab(tab);
+    // Close settings and about when switching tabs
+    setShowSettings(false);
+    setShowAbout(false);
+    
     if (tab === 'icons') {
       setRepoUrl('https://cdn.jsdelivr.net/npm/lucide-react');
     } else {
       setRepoUrl('https://cdn.jsdelivr.net/npm/@shadcn/ui/');
+    }
+  };
+
+  const handleSettingsToggle = () => {
+    setShowSettings(!showSettings);
+    // Close about when opening settings
+    if (!showSettings) {
+      setShowAbout(false);
+    }
+  };
+
+  const handleAboutToggle = () => {
+    setShowAbout(!showAbout);
+    // Close settings when opening about
+    if (!showAbout) {
+      setShowSettings(false);
     }
   };
 
@@ -139,27 +159,27 @@ export default function App() {
           
           <div style={{ display: 'flex', gap: '8px' }}>
             <button 
-              onClick={() => setShowAbout(!showAbout)}
+              onClick={handleAboutToggle}
               style={{
                 padding: '8px',
                 border: 'none',
-                backgroundColor: 'transparent',
+                backgroundColor: showAbout ? '#f0f7ff' : 'transparent',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                color: '#646464'
+                color: showAbout ? '#165dff' : '#646464'
               }}
             >
               <Info size={16} />
             </button>
             <button 
-              onClick={() => setShowSettings(!showSettings)}
+              onClick={handleSettingsToggle}
               style={{
                 padding: '8px',
                 border: 'none',
-                backgroundColor: 'transparent',
+                backgroundColor: showSettings ? '#f0f7ff' : 'transparent',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                color: '#646464'
+                color: showSettings ? '#165dff' : '#646464'
               }}
             >
               <Settings size={16} />
@@ -181,8 +201,9 @@ export default function App() {
                 fontWeight: '500',
                 textTransform: 'capitalize',
                 cursor: 'pointer',
-                borderBottom: activeTab === tab ? '2px solid #165dff' : '2px solid transparent',
-                color: activeTab === tab ? '#165dff' : '#646464'
+                borderBottom: activeTab === tab && !showSettings && !showAbout ? '2px solid #165dff' : '2px solid transparent',
+                color: activeTab === tab && !showSettings && !showAbout ? '#165dff' : '#646464',
+                opacity: showSettings || showAbout ? 0.5 : 1
               }}
             >
               {tab}
@@ -203,7 +224,7 @@ export default function App() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <h3 style={{ margin: 0, fontSize: '14px', fontWeight: '600' }}>About Librarian</h3>
             <button 
-              onClick={() => setShowAbout(false)}
+              onClick={handleAboutToggle}
               style={{ border: 'none', backgroundColor: 'transparent', cursor: 'pointer', color: '#646464' }}
             >
               <X size={16} />
@@ -246,7 +267,7 @@ export default function App() {
               Settings
             </h3>
             <button 
-              onClick={() => setShowSettings(false)}
+              onClick={handleSettingsToggle}
               style={{ 
                 border: 'none', 
                 backgroundColor: 'transparent', 
@@ -977,13 +998,25 @@ export default function App() {
               borderBottom: '1px solid #e5e7eb',
               backgroundColor: '#f8f9fa'
             }}>
-              <p style={{ 
-                margin: '0 0 12px 0', 
-                fontSize: '12px', 
-                color: '#646464' 
-              }}>
-                Search and insert Lucide icons
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <p style={{ 
+                  margin: 0, 
+                  fontSize: '12px', 
+                  color: '#646464' 
+                }}>
+                  Search and insert Lucide icons
+                </p>
+                <p style={{ 
+                  margin: 0, 
+                  fontSize: '12px', 
+                  color: '#646464',
+                  fontWeight: '600'
+                }}>
+                  {isLoadingIcons ? 'Loading...' : `${lucideIconsList.filter(iconName => 
+                    iconName.toLowerCase().includes(iconSearchTerm.toLowerCase())
+                  ).length} icons`}
+                </p>
+              </div>
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -1038,7 +1071,7 @@ export default function App() {
                     .filter(iconName => 
                       iconName.toLowerCase().includes(iconSearchTerm.toLowerCase())
                     )
-                    .slice(0, 100)
+                    .slice(0, 200) // Show more icons
                     .map((iconName) => {
                       const IconComponent = (LucideIcons as any)[iconName];
                       return (
@@ -1067,17 +1100,16 @@ export default function App() {
               )}
             </div>
 
-            {/* Icon Controls */}
-            {selectedLucideIcon && (
-              <div style={{ 
-                padding: '20px', 
-                borderTop: '1px solid #e5e7eb',
-                backgroundColor: '#f8f9fa',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
-                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            {/* Persistent Footer */}
+            <div style={{ 
+              padding: '20px', 
+              borderTop: '1px solid #e5e7eb',
+              backgroundColor: '#f8f9fa',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                   <div>
                     <label style={{ 
                       display: 'block', 
@@ -1164,7 +1196,7 @@ export default function App() {
                         data: {
                           iconName: selectedLucideIcon,
                           size: iconSize,
-                          color: iconColor,
+                          color: iconColor
                         }
                       }
                     }, '*');
@@ -1172,24 +1204,26 @@ export default function App() {
                       description: selectedLucideIcon
                     });
                   }}
+                  disabled={!selectedLucideIcon}
                   style={{
                     width: '60px',
                     height: '60px',
                     borderRadius: '50%',
-                    backgroundColor: '#165dff',
+                    backgroundColor: selectedLucideIcon ? '#165dff' : '#d1d5db',
                     border: 'none',
                     color: 'white',
-                    cursor: 'pointer',
+                    cursor: selectedLucideIcon ? 'pointer' : 'not-allowed',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 4px 12px rgba(22, 93, 255, 0.3)'
+                    boxShadow: selectedLucideIcon ? '0 4px 12px rgba(22, 93, 255, 0.3)' : 'none',
+                    transition: 'all 0.2s'
                   }}
                 >
                   <Plus size={24} strokeWidth={3} />
                 </button>
               </div>
-            )}
+            </div>
           </div>
         )}
         </div>
