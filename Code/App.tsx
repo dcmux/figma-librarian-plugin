@@ -1101,38 +1101,6 @@ export default function App() {
               )}
             </div>
 
-            {/* Simple Persistent Footer - Always Visible */}
-            <div style={{ 
-              padding: '20px', 
-              borderTop: '1px solid #e5e7eb',
-              backgroundColor: '#f8f9fa',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <button 
-                onClick={() => {
-                  toast.success('Add icon feature coming soon!');
-                }}
-                style={{
-                  width: '60px',
-                  height: '60px',
-                  borderRadius: '50%',
-                  backgroundColor: '#165dff',
-                  border: 'none',
-                  color: 'white',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(22, 93, 255, 0.3)'
-                }}
-              >
-                <Plus size={24} strokeWidth={3} />
-              </button>
-            </div>
-
             {/* Footer with Size Dropdown and Color Control */}
             <div style={{ 
               padding: '20px', 
